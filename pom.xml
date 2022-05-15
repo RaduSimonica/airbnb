@@ -51,7 +51,7 @@
                     <version>3.0.0-M6</version>
                     <configuration>
                         <suiteXmlFiles>
-                            <suiteXmlFile>src/test/java/Suites/MainSuite.xml</suiteXmlFile>
+                            <suiteXmlFile>src/test/java/suites/MainSuite.xml</suiteXmlFile>
                         </suiteXmlFiles>
                     </configuration>
                 </plugin>

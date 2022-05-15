@@ -7,6 +7,8 @@ import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import utils.config.ConfigData;
 import org.testng.Assert;
 
@@ -19,10 +21,12 @@ public class Base {
 
     protected WebDriver driver;
 
+    @BeforeClass
     public void setup() {
         setupChromeDriver();
     }
 
+    @AfterClass
     public void teardown() {
         this.driver.quit();
     }
@@ -33,8 +37,8 @@ public class Base {
             this.driver = new ChromeDriver(chromeOptions());
             this.driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(ConfigData.getDriverImplicitWait()));
             this.driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(ConfigData.getDriverPageLoadWait()));
-        } catch (Exception e) {
-            LOGGER.log(Level.ERROR, "Cannot setup Chrome driver. Stopping execution.");
+        } catch (IllegalStateException e) {
+            LOGGER.log(Level.ERROR, "Cannot setup Chrome driver. Driver not found", e);
             Assert.fail("Cannot setup Chrome driver. Stopping execution.");
         }
     }
