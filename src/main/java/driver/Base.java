@@ -9,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import utils.DriverUtils;
 import utils.config.ConfigData;
 import org.testng.Assert;
 
@@ -20,10 +21,12 @@ public class Base {
     private static final Logger LOGGER = LogManager.getLogger();
 
     protected WebDriver driver;
+    protected DriverUtils driverUtils;
 
     @BeforeClass
     public void setup() {
         setupChromeDriver();
+        this.driverUtils = new DriverUtils(this.driver);
     }
 
     @AfterClass
@@ -47,7 +50,8 @@ public class Base {
         ChromeOptions chromeOptions = new ChromeOptions();
 
         chromeOptions.addArguments("enable-automation");
-        chromeOptions.addArguments("--headless");
+        // TODO: Don't forget to uncomment this before the final code cleanup.
+//        chromeOptions.addArguments("--headless");
         chromeOptions.addArguments("--window-size=1920,1080");
         chromeOptions.addArguments("--no-sandbox");
         chromeOptions.addArguments("--disable-extensions");
