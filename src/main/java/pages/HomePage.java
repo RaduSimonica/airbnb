@@ -16,7 +16,7 @@ import java.util.List;
 
 public class HomePage {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private Logger logger;
     private final DriverUtils driverUtils;
 
     @FindBy(className = "_oda838")
@@ -41,9 +41,10 @@ public class HomePage {
     private WebElement bigSearchButton;
 
     public HomePage(WebDriver driver) {
+        this.logger = LogManager.getLogger();
         PageFactory.initElements(driver, this);
-        this.driverUtils = new DriverUtils(driver);
-        LOGGER.log(Level.DEBUG, "All page elements initialized.");
+        this.driverUtils = new DriverUtils(driver, this.getClass());
+        this.logger.log(Level.DEBUG, "All page elements initialized.");
     }
 
     public void closeAdModal() {
@@ -51,7 +52,7 @@ public class HomePage {
             this.driverUtils.click(this.closeAdModal, "closeAdModal");
             return;
         }
-        LOGGER.log(Level.DEBUG, "Ad modal close button not displayed.");
+        this.logger.log(Level.DEBUG, "Ad modal close button not displayed.");
     }
 
     public void clickAnywhereButton() {
@@ -95,7 +96,7 @@ public class HomePage {
 
     public void adjustNumberOfGuests(GuestType type, int adjustBy) {
         if (adjustBy == 0) {
-            LOGGER.log(Level.WARN, "adjustBy value is 0. Are you sure it's correct?");
+            this.logger.log(Level.WARN, "adjustBy value is 0. Are you sure it's correct?");
             return;
         }
 
@@ -114,7 +115,7 @@ public class HomePage {
             );
         }
 
-        LOGGER.log(
+        this.logger.log(
                 Level.INFO,
                 String.format(
                         "Adjusted %s %s times",

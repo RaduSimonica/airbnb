@@ -18,15 +18,16 @@ import java.time.Duration;
 
 public class Base {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private Logger logger;
 
     protected WebDriver driver;
     protected DriverUtils driverUtils;
 
     @BeforeClass
     public void setup() {
+        this.logger = LogManager.getLogger();
         setupChromeDriver();
-        this.driverUtils = new DriverUtils(this.driver);
+        this.driverUtils = new DriverUtils(this.driver, this.getClass());
     }
 
     @AfterClass
@@ -41,7 +42,7 @@ public class Base {
             this.driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(ConfigData.getDriverImplicitWait()));
             this.driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(ConfigData.getDriverPageLoadWait()));
         } catch (IllegalStateException e) {
-            LOGGER.log(Level.ERROR, "Cannot setup Chrome driver. Driver not found", e);
+            this.logger.log(Level.ERROR, "Cannot setup Chrome driver. Driver not found", e);
             Assert.fail("Cannot setup Chrome driver. Stopping execution.");
         }
     }

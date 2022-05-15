@@ -10,7 +10,6 @@ import java.util.HashMap;
 @Builder
 @Getter
 public class SearchQuery {
-
     private final String location;
     private final LocalDate checkIn;
     private final LocalDate checkOut;

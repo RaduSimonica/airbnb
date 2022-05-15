@@ -11,16 +11,17 @@ import java.util.List;
 
 public class DriverUtils {
 
-    private final Logger LOGGER = LogManager.getLogger();
-    private WebDriver driver;
+    private final Logger logger;
+    private final WebDriver driver;
 
-    public DriverUtils(WebDriver driver) {
+    public DriverUtils(WebDriver driver, Class<?> loggerClass) {
         this.driver = driver;
+        this.logger = LogManager.getLogger(loggerClass);
     }
 
     public void openPage(Url url) {
         this.driver.navigate().to(url.get());
-        LOGGER.log(Level.INFO, String.format("Opened page: ", url));
+        this.logger.log(Level.INFO, String.format("Opened page: ", url));
     }
 
     public void clickElementInListByText(List<WebElement> webElementList, String textOnElement) {
@@ -30,7 +31,7 @@ public class DriverUtils {
                 return;
             }
         }
-        LOGGER.log(Level.WARN, String.format("'%s' element not found.", textOnElement));
+        this.logger.log(Level.WARN, String.format("'%s' element not found.", textOnElement));
     }
 
     public void clickElementInListByAttribute(List<WebElement> webElementList, String attrName, String attrValue) {
@@ -45,20 +46,20 @@ public class DriverUtils {
                 return;
             }
         }
-        LOGGER.log(Level.WARN, String.format("Element with attribute: %s not found.", attribute));
+        this.logger.log(Level.WARN, String.format("Element with attribute: %s not found.", attribute));
     }
 
     public void click(WebElement element, String name) {
         if (element.isDisplayed()) {
             element.click();
-            LOGGER.log(Level.INFO, String.format("Clicked on %s.", name));
+            this.logger.log(Level.INFO, String.format("Clicked on %s.", name));
             return;
         }
-        LOGGER.log(Level.DEBUG, String.format("%s not displayed.", name));
+        this.logger.log(Level.DEBUG, String.format("%s not displayed.", name));
     }
 
     public void sendText(WebElement element, String name, String textToSend) {
         element.sendKeys(textToSend);
-        LOGGER.log(Level.INFO, String.format("Sent text to element: %s", name));
+        this.logger.log(Level.INFO, String.format("Sent text to element: %s", name));
     }
 }
