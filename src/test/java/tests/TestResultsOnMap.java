@@ -9,6 +9,9 @@ import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.*;
+import pages.containers.ListingDetails;
+import pages.containers.Location;
+import pages.containers.SearchQuery;
 import utils.Routines;
 import utils.TimeUtils;
 

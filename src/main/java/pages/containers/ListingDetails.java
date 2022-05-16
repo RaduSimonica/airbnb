@@ -1,4 +1,4 @@
-package pages;
+package pages.containers;
 
 import lombok.Builder;
 import lombok.Getter;

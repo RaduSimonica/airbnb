@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import pages.HomePage;
 import pages.ResultsPage;
-import pages.SearchQuery;
+import pages.containers.SearchQuery;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package pages;
+package pages.containers;
 
 import enums.GuestType;
 import lombok.Builder;
