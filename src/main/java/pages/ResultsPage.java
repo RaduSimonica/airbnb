@@ -4,6 +4,7 @@ import enums.Filter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -31,11 +32,17 @@ public class ResultsPage {
     @FindBy(className = "lwm61be")
     private List<WebElement> propertyLinks;
 
-    @FindBy(className = "_6tbg2q")
-    private List<WebElement> propertyImages;
-
     @FindBy(className = "r35zuq5")
     private List<WebElement> propertyWrappers;
+
+    @FindBy(className = "v1tureqs")
+    private WebElement filtersButton;
+
+    @FindBy(className = "_1ouw2w0")
+    private List<WebElement> filtersCategories;
+
+    @FindBy(className = "_16sjn7m8")
+    private List<WebElement> filtersSections;
 
     public ResultsPage(WebDriver driver) {
         this.logger = LogManager.getLogger();
@@ -117,5 +124,54 @@ public class ResultsPage {
         this.logger.log(Level.ERROR, String.format("Failed to open property: %s", listingId));
         Assert.fail(String.format("Failed to open property: %s", listingId));
         return null;
+    }
+
+    public void clickFiltersButton() {
+        this.driverUtils.click(this.filtersButton, "Filters button");
+    }
+
+    public void selectNumberOfBedrooms(int bedrooms) {
+        for (WebElement element : this.filtersCategories) {
+            if (element.getAttribute("aria-label").equalsIgnoreCase("Bedrooms")) {
+                if (bedrooms == 0) {
+                    this.driverUtils.click(
+                            element.findElement(By.xpath("//div[@data-testid=\"menuItemButton-Any\"]")),
+                            "Any Bedrooms"
+                    );
+                    return;
+                }
+                if (bedrooms >= 8) {
+                    this.driverUtils.click(
+                            element.findElement(By.xpath("//div[@data-testid=\"menuItemButton-8+\"]")),
+                            "8+ Bedrooms"
+                    );
+                    return;
+                }
+                this.driverUtils.click(
+                        element.findElement(
+                                By.xpath(String.format("//div[@data-testid=\"menuItemButton-%s\"]", bedrooms))
+                        ),
+                        String.format("%s Bedrooms", bedrooms)
+                );
+                return;
+            }
+        }
+
+        this.logger.log(Level.ERROR, "Failed to select bedrooms.");
+        Assert.fail("Failed to select bedrooms.");
+    }
+
+    public void clickShowMoreAmenities() {
+        for (WebElement element : this.filtersSections) {
+            if (element.getAttribute("aria-labelledby").contains("1868246035810896014")) {
+                this.driverUtils.click(
+                        element.findElement(By.xpath("//span[@class=\"_jro6t0\"]")),
+                        "Show more Amenities"
+                );
+            }
+        }
+
+        this.logger.log(Level.ERROR, "Failed to click Show more Amenities.");
+        Assert.fail("Failed to click Show more Amenities.");
     }
 }

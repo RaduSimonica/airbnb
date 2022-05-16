@@ -25,7 +25,7 @@ public class DriverUtils {
 
     public void openPage(Url url) {
         this.driver.navigate().to(url.get());
-        this.logger.log(Level.INFO, String.format("Opened page: ", url));
+        this.logger.log(Level.INFO, String.format("Opened page: %s", url.get()));
     }
 
     public void switchToLastOpenedTab() {
