@@ -33,6 +33,7 @@ public class Base {
     @AfterClass
     public void teardown() {
         this.driver.quit();
+        this.logger.log(Level.INFO, "Test finished!");
     }
 
     private void setupChromeDriver() {

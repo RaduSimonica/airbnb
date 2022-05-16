@@ -4,6 +4,8 @@ import enums.GuestType;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -16,7 +18,7 @@ import java.util.List;
 
 public class HomePage {
 
-    private Logger logger;
+    private final Logger logger;
     private final DriverUtils driverUtils;
 
     @FindBy(className = "_oda838")
@@ -36,6 +38,9 @@ public class HomePage {
 
     @FindBy(className = "_ul9u8c")
     private List<WebElement> guestsButtons;
+
+    @FindBy(className = "_1665lvv")
+    private List<WebElement> numbersOfGuests;
 
     @FindBy(className = "_jxxpcd")
     private WebElement bigSearchButton;
@@ -94,35 +99,45 @@ public class HomePage {
         );
     }
 
-    public void adjustNumberOfGuests(GuestType type, int adjustBy) {
-        if (adjustBy == 0) {
+    public void setNumberOfGuests(GuestType type, int value) {
+        // In case the actual number of guests is not 0, subtract the current number of guests.
+        value -= getNumberOfGuests(type);
+
+        if (value == 0) {
             this.logger.log(Level.WARN, "adjustBy value is 0. Are you sure it's correct?");
             return;
         }
 
-        StringBuilder value = new StringBuilder()
+        StringBuilder attrValue = new StringBuilder()
                 .append("stepper-")
                 .append(type.toString().toLowerCase())
                 .append("-")
-                .append(adjustBy < 0 ? "decrease-" : "increase-")
+                .append("increase-")
                 .append("button");
 
-        for (int i = 0; i < Math.abs(adjustBy); i++) {
+        for (int i = 0; i < Math.abs(value); i++) {
             this.driverUtils.clickElementInListByAttribute(
                     this.guestsButtons,
                     "data-testid",
-                    value.toString()
+                    attrValue.toString()
             );
         }
+    }
 
-        this.logger.log(
-                Level.INFO,
-                String.format(
-                        "Adjusted %s %s times",
-                        type,
-                        adjustBy
-                )
-        );
+    public int getNumberOfGuests(GuestType type) {
+        for (WebElement element : this.numbersOfGuests) {
+            try {
+                WebElement sibling = element.findElements(By.tagName("span")).get(0);
+                if (sibling.getAttribute("data-testid").contains(type.toString().toLowerCase())) {
+                    return Integer.parseInt(sibling.getText());
+                }
+            } catch (NoSuchElementException | IndexOutOfBoundsException e) {
+                this.logger.log(Level.TRACE, "Cannot find sibling for number of guests", e);
+            }
+        }
+
+        this.logger.log(Level.ERROR, String.format("Cannot find number %s number of guests", type));
+        return 0;
     }
 
     public void clickSearchButton() {
