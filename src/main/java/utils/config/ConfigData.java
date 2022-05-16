@@ -38,6 +38,10 @@ public class ConfigData {
         return getGenericProperty(ConfigProperty.DRIVER_CHROME_PATH_LINUX);
     }
 
+    public static boolean getChromeHeadless() {
+        return Boolean.parseBoolean(getGenericProperty(ConfigProperty.DRIVER_CHROME_HEADLESS));
+    }
+
     public static Integer getDriverImplicitWait() {
         ConfigProperty property = ConfigProperty.DRIVER_WAIT_IMPLICIT;
         try {

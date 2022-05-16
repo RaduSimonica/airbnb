@@ -6,6 +6,7 @@ public enum ConfigProperty {
     DRIVER_CHROME_PATH_LINUX("driver.chrome.path.linux"),
     DRIVER_CHROME_PATH_WINDOWS("driver.chrome.path.windows"),
     DRIVER_CHROME_ENV_VARIABLE("driver.chrome.env_variable"),
+    DRIVER_CHROME_HEADLESS("driver.chrome.headless"),
     DRIVER_WAIT_IMPLICIT("driver.wait.implicit"),
     DRIVER_WAIT_PAGE_LOAD("driver.wait.page_load");
 

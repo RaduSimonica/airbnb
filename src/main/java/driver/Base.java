@@ -51,9 +51,11 @@ public class Base {
     private ChromeOptions chromeOptions() {
         ChromeOptions chromeOptions = new ChromeOptions();
 
+        if (ConfigData.getChromeHeadless()) {
+            chromeOptions.addArguments("--headless");
+        }
+
         chromeOptions.addArguments("enable-automation");
-        // TODO: Don't forget to uncomment this before the final code cleanup.
-//        chromeOptions.addArguments("--headless");
         chromeOptions.addArguments("--window-size=1920,1080");
         chromeOptions.addArguments("--no-sandbox");
         chromeOptions.addArguments("--disable-extensions");

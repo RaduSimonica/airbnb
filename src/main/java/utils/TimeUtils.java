@@ -1,12 +1,13 @@
 package utils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TimeUtils {
 
-    public static LocalDate getTodayDate() {
-        return LocalDate.now();
+    public static LocalDateTime getNow() {
+        return LocalDateTime.now();
     }
 
     public static LocalDate getDaysFromToday(int days) {
