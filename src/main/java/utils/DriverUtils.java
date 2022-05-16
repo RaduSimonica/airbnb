@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import utils.config.ConfigData;
 
 import java.util.ArrayList;
@@ -25,8 +26,12 @@ public class DriverUtils {
     }
 
     public void openPage(Url url) {
-        this.driver.navigate().to(url.get());
-        this.logger.log(Level.INFO, String.format("Opened page: %s", url.get()));
+        openPage(url.get());
+    }
+
+    public void openPage(String url) {
+        this.driver.navigate().to(url);
+        this.logger.log(Level.INFO, String.format("Opened page: %s", url));
     }
 
     public void switchToLastOpenedTab() {
@@ -165,5 +170,10 @@ public class DriverUtils {
             Thread.sleep(millis);
         } catch (InterruptedException ignored) {
         }
+    }
+
+    public void hoverElement(WebElement element) {
+        Actions action = new Actions(this.driver);
+        action.moveToElement(element).build().perform();
     }
 }

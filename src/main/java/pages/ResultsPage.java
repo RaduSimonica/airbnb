@@ -38,6 +38,9 @@ public class ResultsPage {
     @FindBy(className = "r35zuq5")
     private List<WebElement> propertyWrappers;
 
+    @FindBy(className = "c12h3gv8")
+    private List<WebElement> propertiesTitles;
+
     @FindBy(className = "v1tureqs")
     private WebElement filtersButton;
 
@@ -58,6 +61,18 @@ public class ResultsPage {
 
     @FindBy(className = "g1tup9az")
     private List<WebElement> propertySummaryDetails;
+
+    @FindBy(className = "a8jt5op")
+    private List<WebElement> pricesInList;
+
+    @FindBy(className = "_1rhps41")
+    private List<WebElement> pricesOnMap;
+
+    @FindBy(className = "_1mhd7uz")
+    private WebElement listingPopup;
+
+    @FindBy(className = "b1ap2j3w")
+    private WebElement closePillButton;
 
     public ResultsPage(WebDriver driver) {
         this.logger = LogManager.getLogger();
@@ -236,5 +251,117 @@ public class ResultsPage {
 
         this.logger.log(Level.ERROR, String.format("Failed to get number of bedrooms for listing id: %s", listingId));
         return 0;
+    }
+
+    public int hoverOnListingReturningPrice(String listingId) {
+        for (WebElement element : this.propertiesTitles) {
+            String titleAttr = element.getAttribute("aria-labelledby");
+            if (StringUtils.extractNumberFromText(titleAttr).contains(listingId)) {
+                this.logger.log(Level.DEBUG, String.format("Hovering on listing: %s", listingId));
+                this.driverUtils.hoverElement(element);
+                WebElement price = element.findElement(
+                        By.xpath(".//div[contains(@class, '_1n700sq')]/span[contains(@class, 'a8jt5op')]")
+                );
+                return Integer.parseInt(StringUtils.extractFirstNumberFromText(price.getText()));
+            }
+        }
+
+        this.logger.log(Level.ERROR, String.format("Failed to find property: %s", listingId));
+        Assert.fail(String.format("Failed to find property: %s", listingId));
+        return 0;
+    }
+
+    public boolean isPillHighlighted(int price) {
+        for (WebElement element : this.pricesOnMap) {
+            int priceOnMap = Integer.parseInt(StringUtils.extractNumberFromText(element.getText()));
+            if (price == priceOnMap) {
+                WebElement pill = element.findElement(By.xpath("./../.."));
+                this.logger.log(Level.INFO, String.format("Found pill with price %s.", price));
+                return pill.getAttribute("style").startsWith("background-color: rgb(34, 34, 34);");
+            }
+        }
+
+        this.logger.log(Level.ERROR, "Failed to identify highlighted pill");
+        return false;
+    }
+
+    public void clickPill(int price) {
+        for (WebElement element : this.pricesOnMap) {
+            int priceOnMap = Integer.parseInt(StringUtils.extractNumberFromText(element.getText()));
+            if (price == priceOnMap) {
+                WebElement pill = element.findElement(By.xpath("./../.."));
+                this.logger.log(Level.INFO, String.format("Found pill with price %s.", priceOnMap));
+                this.driverUtils.click(pill, String.format("Pill with price: %s", priceOnMap));
+                return;
+            }
+        }
+        this.logger.log(Level.ERROR, String.format("Failed to identify pill with price: %s", price));
+    }
+
+    public void closePill() {
+        this.driverUtils.click(this.closePillButton, "Close Pill button");
+    }
+
+    public ListingDetails gatherDetailsFromListing(String listingId) {
+        for (WebElement element : this.propertiesTitles) {
+            String titleAttr = element.getAttribute("aria-labelledby");
+            if (StringUtils.extractNumberFromText(titleAttr).contains(listingId)) {
+                ListingDetails listingDetails = ListingDetails.builder()
+                        .name(element.findElement(By.xpath(".//div[contains(@class, 't1jojoys')]")).getText())
+                        .price(
+                                Integer.parseInt(
+                                        StringUtils.extractFirstNumberFromText(
+                                                element
+                                                        .findElement(
+                                                                By.xpath(
+                                                                        ".//div[contains(@class, '_1n700sq')]" +
+                                                                                "/span[contains(@class, 'a8jt5op')]"
+                                                                )
+                                                        )
+                                                        .getText()
+                                        )
+                                )
+                        )
+                        .rating(
+                                StringUtils.parseRating(
+                                        element
+                                                .findElement(By.xpath(".//span[contains(@class, 'ru0q88m')]"))
+                                                .getText()
+                                )
+                        )
+                        .build();
+
+                this.logger.log(Level.INFO, String.format("Found listing details in results page: %s", listingDetails));
+                return listingDetails;
+            }
+        }
+
+        this.logger.log(Level.ERROR, String.format("Failed to extract details from listing id: %s", listingId));
+        return null;
+    }
+
+    public ListingDetails gatherDetailsFromOpenPopup() {
+        ListingDetails listingDetails =  ListingDetails.builder()
+                .name(this.listingPopup.findElement(By.xpath(".//div[contains(@class, 't1jojoys')]")).getText())
+                .price(
+                        Integer.parseInt(
+                                StringUtils.extractFirstNumberFromText(
+                                        this.listingPopup
+                                                .findElement(By.xpath(".//span[contains(@class, 'a8jt5op')]"))
+                                                .getText()
+                                )
+                        )
+                )
+                .rating(
+                        StringUtils.parseRating(
+                                this.listingPopup
+                                        .findElement(By.xpath(".//span[contains(@class, 'ru0q88m')]"))
+                                        .getText()
+                        )
+                )
+                .build();
+
+        this.logger.log(Level.INFO, String.format("Found listing details in popup: %s", listingDetails));
+        return listingDetails;
     }
 }
