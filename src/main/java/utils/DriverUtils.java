@@ -18,7 +18,6 @@ public class DriverUtils {
     private final WebDriver driver;
 
     private String mainTab;
-    private List<String> allTabs;
 
     public DriverUtils(WebDriver driver, Class<?> loggerClass) {
         this.driver = driver;
@@ -36,9 +35,8 @@ public class DriverUtils {
 
     public void switchToLastOpenedTab() {
         this.mainTab = this.driver.getWindowHandle();
-        this.allTabs = new ArrayList<>(this.driver.getWindowHandles());
-
-        String newestTab = this.allTabs.get(this.allTabs.size() - 1);
+        List<String> allTabs = new ArrayList<>(this.driver.getWindowHandles());
+        String newestTab = allTabs.get(allTabs.size() - 1);
         this.driver.switchTo().window(newestTab);
         this.logger.log(Level.DEBUG, String.format("Switched to tab: %s", newestTab));
     }

@@ -64,14 +64,6 @@ public class HomePage {
         this.driverUtils.clickElementInListByText(this.searchBox, "Anywhere");
     }
 
-    public void clickAnyWeekButton() {
-        this.driverUtils.clickElementInListByText(this.searchBox, "Any Week");
-    }
-
-    public void clickAddGuestsButton() {
-        this.driverUtils.clickElementInListByText(this.searchBox, "Add guests");
-    }
-
     public void inputLocation(String text) {
         this.driverUtils.click(this.locationInput, "locationInput");
         this.driverUtils.sendText(this.locationInput, "locationInput", text);
@@ -79,10 +71,6 @@ public class HomePage {
 
     public void clickCheckInButton() {
         this.driverUtils.clickElementInListByText(this.dateAndGuestsButtons, "Check in");
-    }
-
-    public void clickCheckOutButton() {
-        this.driverUtils.clickElementInListByText(this.dateAndGuestsButtons, "Check out");
     }
 
     public void clickWhoButton() {

@@ -8,7 +8,7 @@ import org.testng.ITestResult;
 
 public class TestInterceptor implements ITestListener {
 
-    private static Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public void onTestStart(ITestResult result) {
         LOGGER.log(Level.INFO, String.format("Started test: %s", result.getName()));

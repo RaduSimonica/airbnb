@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 
 public class SuiteInterceptor implements ISuiteListener {
 
-    private static Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private LocalDateTime startDateTime;
 

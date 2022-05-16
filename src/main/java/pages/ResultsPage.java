@@ -16,9 +16,7 @@ import utils.DriverUtils;
 import utils.StringUtils;
 import utils.config.ConfigData;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ResultsPage {
@@ -57,14 +55,8 @@ public class ResultsPage {
     @FindBy(className = "_1ku51f04")
     private WebElement showStaysButton;
 
-    @FindBy(className = "_zgc1p6")
-    private WebElement filterFooter;
-
     @FindBy(className = "g1tup9az")
     private List<WebElement> propertySummaryDetails;
-
-    @FindBy(className = "a8jt5op")
-    private List<WebElement> pricesInList;
 
     @FindBy(className = "_1rhps41")
     private List<WebElement> pricesOnMap;
@@ -213,24 +205,6 @@ public class ResultsPage {
 
     public void clickShowStaysButton() {
         this.driverUtils.click(this.showStaysButton, "Show stays");
-    }
-
-    public Map<String, Integer> getNumberOfBedroomsForListings() {
-        Map<String, Integer> allListings = new HashMap<>();
-
-        for (WebElement element : this.propertySummaryDetails) {
-            WebElement title = element.findElement(By.xpath(".//div[@class='t1jojoys dir dir-ltr']"));
-            System.out.println(title.getAttribute("id"));
-            WebElement bedrooms = element.findElement(By.xpath(".//span[2]/span[3]"));
-            System.out.println(bedrooms.getText());
-            allListings.put(
-                    title.getAttribute("id"),
-                    Integer.parseInt(StringUtils.extractNumberFromText(bedrooms.getText()))
-            );
-        }
-
-        this.logger.log(Level.INFO, String.format("Found the number of bedrooms for %s listings.", allListings.size()));
-        return allListings;
     }
 
     public int getNumberOfBedrooms(String listingId) {
