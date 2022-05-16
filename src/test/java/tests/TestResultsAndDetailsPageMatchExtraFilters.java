@@ -1,28 +1,26 @@
 package tests;
 
 import driver.Base;
-import enums.Filter;
-import enums.GuestType;
-import enums.Url;
+import enums.*;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.*;
-import utils.DriverUtils;
 import utils.Routines;
 import utils.TimeUtils;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TestResultsAndDetailsPageMatchExtraFilters extends Base {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final int NUMBER_OF_BEDROOMS = 5;
 
-    @Test(
-            description = "Check if the results and details page match the extra filters."
-    )
+    @Test(description = "Check if the results and details page match the extra filters.")
     public void testExtraFilters() {
 
         this.driverUtils.openPage(Url.HOMEPAGE);
@@ -30,7 +28,7 @@ public class TestResultsAndDetailsPageMatchExtraFilters extends Base {
         HomePage homePage = new HomePage(this.driver);
         homePage.closeAdModal();
 
-        HashMap<GuestType, Integer> guests = new HashMap<>();
+        Map<GuestType, Integer> guests = new HashMap<>();
         guests.put(GuestType.ADULTS, 2);
         guests.put(GuestType.CHILDREN, 1);
 
@@ -44,10 +42,33 @@ public class TestResultsAndDetailsPageMatchExtraFilters extends Base {
         ResultsPage resultsPage = new Routines(this.driver).searchPropertiesOnHomePage(searchQuery);
 
         resultsPage.clickFiltersButton();
-        resultsPage.selectNumberOfBedrooms(5);
-        // Fails here! Good night for now :)
+        resultsPage.selectNumberOfBedrooms(NUMBER_OF_BEDROOMS);
         resultsPage.clickShowMoreAmenities();
+        resultsPage.clickCheckbox(Checkbox.POOL);
+        resultsPage.clickShowStaysButton();
 
+        List<String> expectedListingIds = resultsPage.getAllListingIds();
 
+        for (String listingId : expectedListingIds) {
+            LOGGER.log(Level.INFO, String.format("Checking listing id: %s", listingId));
+            Assert.assertTrue(
+                    resultsPage.getNumberOfBedrooms(listingId) >= NUMBER_OF_BEDROOMS,
+                    String.format(
+                            "Check if Listing id %s has at least %s bedrooms.",
+                            listingId,
+                            NUMBER_OF_BEDROOMS
+                    )
+            );
+
+            PropertyPage propertyPage = resultsPage.openListing(listingId);
+            this.driverUtils.switchToLastOpenedTab();
+
+            propertyPage.clickShowAllAmenitiesButton();
+            Assert.assertTrue(
+                    propertyPage.AmenityExists(Amenity.POOL),
+                    "Check if the property has any type of Pool."
+            );
+            this.driverUtils.switchToMainTab();
+        }
     }
 }

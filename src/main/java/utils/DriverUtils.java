@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import utils.config.ConfigData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,8 @@ public class DriverUtils {
     }
 
     public void click(WebElement element, String name) {
-        if (element.isDisplayed()) {
+        waitForElementToBeClickable(element, ConfigData.getDriverImplicitWait());
+        if (element.isDisplayed() || element.isEnabled()) {
             element.click();
             this.logger.log(Level.INFO, String.format("Clicked on %s.", name));
             return;
@@ -79,6 +81,15 @@ public class DriverUtils {
     public void sendText(WebElement element, String name, String textToSend) {
         element.sendKeys(textToSend);
         this.logger.log(Level.INFO, String.format("Sent text to element: %s", name));
+    }
+
+    public void waitForElementToBeClickable(WebElement element, int timeoutInSeconds) {
+        for (int i = 0; i < timeoutInSeconds; i++) {
+            if (element.isDisplayed() && element.isEnabled()) {
+                return;
+            }
+            waitFor(1000);
+        }
     }
 
     public void waitForElementText(WebElement element, int timeoutInSeconds) {
@@ -149,7 +160,7 @@ public class DriverUtils {
         );
     }
 
-    private void waitFor(int millis) {
+    public void waitFor(int millis) {
         try {
             Thread.sleep(millis);
         } catch (InterruptedException ignored) {

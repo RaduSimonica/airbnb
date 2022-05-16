@@ -1,5 +1,6 @@
 package pages;
 
+import enums.Amenity;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,12 @@ public class PropertyPage {
     @FindBy(className = "len26si")
     private List<WebElement> summaryDetails;
 
+    @FindBy(className = "b65jmrv")
+    private List<WebElement> showAllButtons;
+
+    @FindBy(className = "_wheg71v")
+    private WebElement amenitiesHolder;
+
     public PropertyPage(WebDriver driver) {
         this.logger = LogManager.getLogger();
         PageFactory.initElements(driver, this);
@@ -36,4 +43,28 @@ public class PropertyPage {
 
         return Integer.parseInt(StringUtils.extractNumberFromText(child.getText()));
     }
+
+    public void clickShowAllAmenitiesButton() {
+        for (WebElement element : this.showAllButtons) {
+            if (element.getText().contains("amenities")) {
+                this.driverUtils.click(element, "Show all amenities");
+                return;
+            }
+        }
+
+        this.logger.log(Level.ERROR, "Failed to click show all amenities button.");
+    }
+
+    public boolean AmenityExists(Amenity amenity) {
+        String xPath = String.format("//*[contains(@id,'%s') and @class='_gw4xx4']", amenity.get());
+        List<WebElement> foundAmenities = this.amenitiesHolder.findElements(By.xpath(xPath));
+
+        this.logger.log(
+                Level.INFO,
+                String.format("Found %s amenities that match this criteria.", foundAmenities.size())
+        );
+
+        return foundAmenities.size() > 0;
+    }
+
 }

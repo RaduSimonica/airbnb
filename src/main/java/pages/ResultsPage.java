@@ -1,5 +1,6 @@
 package pages;
 
+import enums.Checkbox;
 import enums.Filter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +15,9 @@ import utils.DriverUtils;
 import utils.StringUtils;
 import utils.config.ConfigData;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ResultsPage {
@@ -41,8 +44,20 @@ public class ResultsPage {
     @FindBy(className = "_1ouw2w0")
     private List<WebElement> filtersCategories;
 
-    @FindBy(className = "_16sjn7m8")
-    private List<WebElement> filtersSections;
+    @FindBy(xpath = "//div[@data-section-id=\"FILTER_SECTION_CONTAINER:MORE_FILTERS_AMENITIES_WITH_SUBCATEGORIES:TAB_ALL_HOMES\"]")
+    private WebElement amenitiesSection;
+
+    @FindBy(className = "_1yf4i4f")
+    private List<WebElement> checkboxes;
+
+    @FindBy(className = "_1ku51f04")
+    private WebElement showStaysButton;
+
+    @FindBy(className = "_zgc1p6")
+    private WebElement filterFooter;
+
+    @FindBy(className = "g1tup9az")
+    private List<WebElement> propertySummaryDetails;
 
     public ResultsPage(WebDriver driver) {
         this.logger = LogManager.getLogger();
@@ -128,6 +143,7 @@ public class ResultsPage {
 
     public void clickFiltersButton() {
         this.driverUtils.click(this.filtersButton, "Filters button");
+        this.driverUtils.waitFor(1500);
     }
 
     public void selectNumberOfBedrooms(int bedrooms) {
@@ -162,16 +178,63 @@ public class ResultsPage {
     }
 
     public void clickShowMoreAmenities() {
-        for (WebElement element : this.filtersSections) {
-            if (element.getAttribute("aria-labelledby").contains("1868246035810896014")) {
-                this.driverUtils.click(
-                        element.findElement(By.xpath("//span[@class=\"_jro6t0\"]")),
-                        "Show more Amenities"
-                );
+        this.driverUtils.click(
+                this.amenitiesSection.findElement(By.tagName("button")),
+                "Show more amenities button"
+        );
+    }
+
+    public void clickCheckbox(Checkbox checkbox) {
+        for (WebElement element : this.checkboxes) {
+            if (element.getAttribute("name").equalsIgnoreCase(checkbox.get())) {
+                this.driverUtils.click(element, checkbox.get());
+                return;
             }
         }
 
-        this.logger.log(Level.ERROR, "Failed to click Show more Amenities.");
-        Assert.fail("Failed to click Show more Amenities.");
+        this.logger.log(Level.ERROR, String.format("Failed to click %s checkbox.", checkbox.get()));
+    }
+
+    public void clickShowStaysButton() {
+        this.driverUtils.click(this.showStaysButton, "Show stays");
+    }
+
+    public Map<String, Integer> getNumberOfBedroomsForListings() {
+        Map<String, Integer> allListings = new HashMap<>();
+
+        for (WebElement element : this.propertySummaryDetails) {
+            WebElement title = element.findElement(By.xpath(".//div[@class='t1jojoys dir dir-ltr']"));
+            System.out.println(title.getAttribute("id"));
+            WebElement bedrooms = element.findElement(By.xpath(".//span[2]/span[3]"));
+            System.out.println(bedrooms.getText());
+            allListings.put(
+                    title.getAttribute("id"),
+                    Integer.parseInt(StringUtils.extractNumberFromText(bedrooms.getText()))
+            );
+        }
+
+        this.logger.log(Level.INFO, String.format("Found the number of bedrooms for %s listings.", allListings.size()));
+        return allListings;
+    }
+
+    public int getNumberOfBedrooms(String listingId) {
+        for (WebElement element : this.propertySummaryDetails) {
+            WebElement title = element.findElement(By.xpath(".//div[@class='t1jojoys dir dir-ltr']"));
+            if (title.getAttribute("id").contains(listingId)) {
+                WebElement bedrooms = element.findElement(By.xpath(".//span[2]/span[3]"));
+                this.logger.log(
+                        Level.INFO,
+                        String.format(
+                                "Found %s for listing id: %s",
+                                bedrooms.getText(),
+                                listingId
+                        )
+                );
+                return Integer.parseInt(StringUtils.extractNumberFromText(bedrooms.getText()));
+            }
+        }
+
+        this.logger.log(Level.ERROR, String.format("Failed to get number of bedrooms for listing id: %s", listingId));
+        return 0;
     }
 }

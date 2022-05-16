@@ -6,7 +6,7 @@ import lombok.Getter;
 import utils.TimeUtils;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.Map;
 
 @Builder
 @Getter
@@ -15,7 +15,7 @@ public class SearchQuery {
     private final Location location;
     private final LocalDate checkIn;
     private final LocalDate checkOut;
-    private final HashMap<GuestType, Integer> guests;
+    private final Map<GuestType, Integer> guests;
 
     public String getDurationString() {
         return TimeUtils.formatFilterDuration(this.checkIn, this.checkOut);
