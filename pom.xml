@@ -53,6 +53,7 @@
                         <suiteXmlFiles>
                             <suiteXmlFile>src/test/java/suites/MainSuite.xml</suiteXmlFile>
                         </suiteXmlFiles>
+                        <reportsDirectory>report</reportsDirectory>
                     </configuration>
                 </plugin>
             </plugins>
