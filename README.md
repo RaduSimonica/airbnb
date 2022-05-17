@@ -22,7 +22,7 @@ This way a report won't generate, but you will be able to see individual tests b
 
 ### Notes:
 - Chrome headless mode is disabled by default. 
-  You can enable it in ```config.properties``` file at line: 6 ```driver.chrome.headless = true```
+  You can enable it in ```src/main/resources/config.properties``` file at line: 6 ```driver.chrome.headless = true```
 - If for any reason the installed version of Chrome is not 101.* and cannot be 101.*, please check your version and
   download the appropriate Chrome drivers from ```https://chromedriver.chromium.org/downloads```. Please note that
   the framework was tested with official release drivers. Beta drivers may not work.
