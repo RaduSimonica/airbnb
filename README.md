@@ -12,6 +12,7 @@
 - Execute the maven test goal ```mvn clean test```
 - Wait for the execution to finish
 - After the execution, a report will be generated at ```report/index.html```
+- Logs can be found in ```logs/``` directory
 
 Alternatively you can find the main TestNG suite at ```src/test/java/suites/MainSuite.xml```.
 Right click on the xml file -> Run...
